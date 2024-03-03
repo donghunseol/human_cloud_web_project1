@@ -9,6 +9,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 @Controller
 public class UserController {
+
+    private  final UserRepository userRepository;
+
+    @PostMapping("/join")
+    public String join(UserRequest.JoinDTO requestDTO){
+        System.out.println(requestDTO);
+
+   userRepository.save(requestDTO);
+    return "redirect:/loginForm";
+    }
+
+    @PostMapping("/login")
+    public String login(UserRequest.JoinDTO requestDTO){
+        System.out.println(requestDTO);
+        return "redirect:/loginForm";
+    }
+
     @GetMapping("/")
     public String index(){
         return "index";
