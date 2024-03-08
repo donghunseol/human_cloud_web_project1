@@ -9,11 +9,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -24,9 +22,23 @@ public class UserController {
     private final ResumeRepository resumeRepository;
     private final ApplyRepository applyRepository;
 
+//    @GetMapping("/")
+//    public String index(HttpServletRequest request) {
+//        List<ResumeResponse.DTO> resumeList = resumeRepository.findAll();
+//        request.setAttribute("resumeList", resumeList);
+//
+//        return "index";
+//    }
+
     @GetMapping("/")
-    public String index(HttpServletRequest request) {
-        List<ResumeResponse.DTO> resumeList = resumeRepository.findAll();
+    public String index(HttpServletRequest request, @RequestParam(defaultValue = "") String keyword) {
+
+        List<ResumeResponse.DTO> resumeList = new ArrayList<>();
+        if (keyword.isBlank()) {
+            resumeList = resumeRepository.findAll();
+        } else {
+            resumeList = resumeRepository.findSearchAll(keyword);
+        }
         request.setAttribute("resumeList", resumeList);
 
         return "index";
@@ -136,11 +148,11 @@ public class UserController {
 //    }
 
     @GetMapping("/api/username-same-check")
-    public @ResponseBody ApiUtil<?> usernameSameCheck(String username){
+    public @ResponseBody ApiUtil<?> usernameSameCheck(String username) {
         User user = userRepository.findByUsername(username);
-        if (user == null){
+        if (user == null) {
             return new ApiUtil<>(true);
-        }else{
+        } else {
             return new ApiUtil<>(false);
         }
     }
